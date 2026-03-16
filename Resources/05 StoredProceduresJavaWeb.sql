@@ -127,10 +127,20 @@ AS
 		BEGIN
 			IF (UPPER(@cod)= 'U')
 			BEGIN
-				UPDATE cliente SET nome = @nome, email = @email,
-					limite_de_credito = @limite, dt_nascimento = @nasc
+				DECLARE @existe CHAR(11)
+				SELECT @existe = cpf FROM cliente
 				WHERE cpf = @cpf
-				SET @output = @cpf + ' alterado com sucesso'
+				IF @existe IS NULL
+				BEGIN
+				    RAISERROR('Cliente não encontrado',16,1)
+				END
+				ELSE 
+				BEGIN
+					UPDATE cliente SET nome = @nome, email = @email,
+						limite_de_credito = @limite, dt_nascimento = @nasc
+					WHERE cpf = @cpf
+					SET @output = @cpf + ' alterado com sucesso'
+				END
 			END
 			ELSE
 			BEGIN
